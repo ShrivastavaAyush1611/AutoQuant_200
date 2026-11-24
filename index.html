@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b2533">
+<title>AQ200 EXCLUS · Service Pack Receiver</title>
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<header>
+  <div class="logo">AQ</div>
+  <div>
+    <h1>AQ200 EXCLUS · Service Pack</h1>
+    <p>Receive logs from the analyzer and send them to the service team</p>
+  </div>
+</header>
+
+<main>
+  <div class="steps">
+    <div class="step on" id="st1">1 · Camera</div>
+    <div class="step" id="st2">2 · Scan codes</div>
+    <div class="step" id="st3">3 · Share</div>
+  </div>
+
+  <!-- Scan -->
+  <section class="card" id="scanCard">
+    <div class="viewer">
+      <video id="video" playsinline muted></video>
+      <div class="reticle" id="reticle"></div>
+      <div class="placeholder" id="placeholder">On the analyzer PC open<br><b>Service Diagnostics › Logs › Share</b>,<br>then tap <b>Start camera</b> here and press <b>Start</b> on the PC.</div>
+    </div>
+
+    <div class="controls">
+      <button class="btn block" id="startBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        Start camera
+      </button>
+    </div>
+    <div class="row hidden" id="camRow" style="margin-top:8px">
+      <select id="camSelect" aria-label="Camera"></select>
+      <button class="btn ghost" id="torchBtn" style="flex:0 0 auto">Torch</button>
+      <button class="btn ghost" id="stopBtn" style="flex:0 0 auto">Stop</button>
+    </div>
+
+    <div class="progress">
+      <div class="bar"><div id="bar"></div></div>
+      <div class="stats"><span id="count">Waiting for codes…</span><span id="pct">0%</span></div>
+      <div class="grid" id="grid"></div>
+    </div>
+    <div class="msg" id="msg">Hold the phone 20–40 cm from the screen so the whole code fits inside the frame.</div>
+  </section>
+
+  <!-- Share -->
+  <section class="hidden" id="doneArea">
+    <div class="card">
+      <div class="summary">
+        <div class="badge"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></div>
+        <div><b id="fileTitle">Service pack received</b><span id="fileInfo"></span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Details for the service team</h2>
+      <label for="site">Hospital / lab</label>
+      <input id="site" placeholder="e.g. City Hospital, Biochemistry lab" autocomplete="organization">
+      <label for="note">Problem seen (optional)</label>
+      <textarea id="note" placeholder="What happened, error message, when…"></textarea>
+      <div class="row">
+        <div><label for="toMail">Service e-mail</label><input id="toMail" type="email" placeholder="service@company.com" inputmode="email"></div>
+        <div><label for="toPhone">Service WhatsApp no.</label><input id="toPhone" type="tel" placeholder="91XXXXXXXXXX" inputmode="tel"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Share</h2>
+      <button class="btn block" id="shareAll">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg>
+        Share with any app (attaches the zip)
+      </button>
+      <div class="apps" style="margin-top:14px">
+        <button class="app" data-app="whatsapp"><span class="ic" style="background:#25D366"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.5 3.5A11.8 11.8 0 0 0 1.9 17.6L.5 23.5l6-1.6A11.8 11.8 0 0 0 20.5 3.5zM12 21.4a9.6 9.6 0 0 1-4.9-1.3l-.4-.2-3.6.9 1-3.5-.2-.4A9.6 9.6 0 1 1 12 21.4zm5.3-7.2c-.3-.1-1.7-.9-2-1s-.5-.1-.7.1-.8 1-.9 1.2-.3.2-.6.1a7.9 7.9 0 0 1-2.3-1.4 8.7 8.7 0 0 1-1.6-2c-.2-.3 0-.4.1-.6l.4-.5.3-.5a.5.5 0 0 0 0-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6a1.1 1.1 0 0 0-.8.4 3.4 3.4 0 0 0-1.1 2.5 5.9 5.9 0 0 0 1.2 3.1 13.4 13.4 0 0 0 5.2 4.5c1.9.8 2.7.9 3.6.7a3.1 3.1 0 0 0 2-1.4 2.5 2.5 0 0 0 .2-1.4c-.1-.2-.3-.3-.6-.4z"/></svg></span>WhatsApp</button>
+        <button class="app" data-app="mail"><span class="ic" style="background:#2563eb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 6-10 7L2 6"/></svg></span>E-mail</button>
+        <button class="app" data-app="gmail"><span class="ic" style="background:#ea4335"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 6.5 12 13l10-6.5V18a2 2 0 0 1-2 2h-2.5V10.3L12 14l-5.5-3.7V20H4a2 2 0 0 1-2-2z"/><path d="M22 6v.5L12 13 2 6.5V6a2 2 0 0 1 3.2-1.6L12 9l6.8-4.6A2 2 0 0 1 22 6z" opacity=".8"/></svg></span>Gmail</button>
+        <button class="app" data-app="outlook"><span class="ic" style="background:#0a64ad"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 5.5 13 4v16L3 18.5z"/><ellipse cx="8" cy="12" rx="2.6" ry="3.3" fill="#0a64ad"/><path d="M14 7h7v10h-7z" opacity=".75"/></svg></span>Outlook</button>
+        <button class="app" data-app="telegram"><span class="ic" style="background:#229ED9"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.9 4.3 18.7 19.4c-.2 1-.9 1.3-1.8.8l-4.9-3.6-2.4 2.3c-.3.3-.5.5-1 .5l.3-5 9.1-8.2c.4-.4-.1-.6-.6-.2L6.2 13.1l-4.8-1.5c-1-.3-1.1-1 .2-1.5L20.6 3c.9-.3 1.6.2 1.3 1.3z"/></svg></span>Telegram</button>
+        <button class="app" data-app="teams"><span class="ic" style="background:#5059C9"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 6.5 13 5v14L2 17.5z"/><path d="M5 9.5h5.5v1.4H8.5V16H7v-5.1H5z" fill="#5059C9"/><circle cx="18" cy="7" r="2.2" opacity=".8"/><path d="M14 10h7v5a3.5 3.5 0 0 1-7 0z" opacity=".8"/></svg></span>Teams</button>
+        <button class="app" data-app="sms"><span class="ic" style="background:#34a853"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>SMS</button>
+        <button class="app" data-app="save"><span class="ic" style="background:#475569"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg></span>Save zip</button>
+      </div>
+      <p class="note"><b>About attachments:</b> only “Share with any app” can attach the zip directly – pick WhatsApp, Gmail, Outlook, Teams, Drive, Bluetooth or any installed app from the list your phone shows. The app buttons try the same; where a phone does not allow it, the zip is saved to Downloads and the app opens with the message ready – attach the saved file there.</p>
+    </div>
+
+    <button class="btn ghost block" id="againBtn">Receive another pack</button>
+  </section>
+</main>
+<div class="toast" id="toast"></div>
+
+<script src="js/app.js"></script>
+</body>
+</html>
